@@ -50,9 +50,10 @@ func sendMessage(ctx context.Context, c *app.RequestContext) {
 	}
 	resp, err := cli.Send(ctx, &rpc.SendRequest{
 		Message: &rpc.Message{
-			Chat:   req.Chat,
-			Text:   req.Text,
-			Sender: req.Sender,
+			Chat:     req.Chat,
+			Text:     req.Text,
+			Sender:   req.Sender,
+			SendTime: time.Now().UTC().UnixMicro(),
 		},
 	})
 	if err != nil {
