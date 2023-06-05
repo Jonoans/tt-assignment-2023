@@ -37,9 +37,10 @@ var (
 
 func (msg *ChatMessage) ToResponse() *rpc.Message {
 	return &rpc.Message{
-		Chat:   msg.ChatID,
-		Text:   msg.Text,
-		Sender: msg.Sender,
+		Chat:     msg.ChatID,
+		Text:     msg.Text,
+		Sender:   msg.Sender,
+		SendTime: int64(msg.SentAt),
 	}
 }
 
