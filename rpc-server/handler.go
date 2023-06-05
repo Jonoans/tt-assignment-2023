@@ -43,7 +43,7 @@ func (s *IMServiceImpl) Send(ctx context.Context, req *rpc.SendRequest) (*rpc.Se
 			return err
 		}
 
-		if err := tx.Where("chat_id = ?", chatMessage.ChatID).Delete(&ChatCursorCache{}).Error; err != nil {
+		if err := tx.Where("chat_id = ? AND reverse = true", chatMessage.ChatID).Delete(&ChatCursorCache{}).Error; err != nil {
 			return err
 		}
 
