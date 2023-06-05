@@ -373,7 +373,7 @@ func TestIMServiceImpl_Pull(t *testing.T) {
 			args: pullArgs{
 				ctx: context.Background(),
 				req: &rpc.PullRequest{
-					Chat:  chatId,
+					Chat: chatId,
 				},
 			},
 			wantErr:            nil,
