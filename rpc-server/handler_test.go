@@ -66,9 +66,9 @@ func checkPullResponse(tt pullTest, messages, messagesReversed []*rpc.Message) f
 	return func(t *testing.T) {
 		s := &IMServiceImpl{}
 		got, err := s.Pull(tt.args.ctx, tt.args.req)
-		assert.NotNil(t, got, "expected response non nil")
+		assert.NotNil(t, got, "expected response non-nil")
 		assert.Truef(t, errors.Is(err, tt.wantErr), "expected error: %+v, got: %+v", tt.wantErr, err)
-		assert.Truef(t, got.GetHasMore() == tt.wantHasMore, "expected hasMore: %t, got %t", tt.wantHasMore, got.GetHasMore())
+		assert.Truef(t, got.GetHasMore() == tt.wantHasMore, "expected hasMore: %t, got: %t", tt.wantHasMore, got.GetHasMore())
 		assert.Truef(t, len(got.GetMessages()) == tt.wantResponseLength, "expected messages length: %d, got: %d", tt.wantResponseLength, len(got.GetMessages()))
 
 		if tt.wantErr == nil {
@@ -77,6 +77,9 @@ func checkPullResponse(tt pullTest, messages, messagesReversed []*rpc.Message) f
 				msgsTruth = messagesReversed
 			}
 			checkMessageContents(t, tt.args.req, got, msgsTruth)
+			assert.Truef(t, got.GetCode() == 0, "expected code zero, got: %d", got.GetCode())
+		} else {
+			assert.Truef(t, got.GetCode() != 0, "expected code non-zero, got: %d", got.GetCode())
 		}
 
 		if tt.wantNextCursor == -1 {
@@ -84,7 +87,7 @@ func checkPullResponse(tt pullTest, messages, messagesReversed []*rpc.Message) f
 				t.Logf("expected next cursor nil, got: %d", *got.NextCursor)
 			}
 		} else {
-			if assert.NotNilf(t, got.NextCursor, "expected next cursor non nil") {
+			if assert.NotNilf(t, got.NextCursor, "expected next cursor non-nil") {
 				assert.Truef(t, *got.NextCursor == int64(tt.wantNextCursor), "expected next cursor: %d, got: %d", tt.wantNextCursor, *got.NextCursor)
 			}
 		}
@@ -202,9 +205,9 @@ func TestIMServiceImpl_Send(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &IMServiceImpl{}
 			got, err := s.Send(tt.args.ctx, tt.args.req)
-			assert.NotNil(t, got, "expected response non nil")
+			assert.NotNil(t, got, "expected response non-nil")
 			assert.Truef(t, errors.Is(err, tt.wantErr), "expected error: %+v, got: %+v", tt.wantErr, err)
-			assert.Truef(t, got.GetCode() == int32(tt.wantCode), "expected code %d, got %d", tt.wantCode, got.GetCode())
+			assert.Truef(t, got.GetCode() == int32(tt.wantCode), "expected code %d, got: %d", tt.wantCode, got.GetCode())
 		})
 	}
 }

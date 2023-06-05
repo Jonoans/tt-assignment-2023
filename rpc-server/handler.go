@@ -81,6 +81,7 @@ func (s *IMServiceImpl) Pull(ctx context.Context, req *rpc.PullRequest) (*rpc.Pu
 			if !errors.Is(err, gorm.ErrRecordNotFound) {
 				resp.Code = -1
 				resp.Msg = "something went wrong..."
+				log.Printf("Error when pulling message: %+v\n", err)
 				return resp, err
 			} else {
 				cachedCursor = nil
