@@ -89,10 +89,12 @@ func (s *IMServiceImpl) Pull(ctx context.Context, req *rpc.PullRequest) (*rpc.Pu
 		}
 	}
 
-	if req.GetLimit() <= 0 {
+	if req.GetLimit() < 0 {
 		resp.Code = 2
 		resp.Msg = invalidLimitErr.Error()
 		return resp, invalidLimitErr
+	} else if req.GetLimit() == 0 {
+		req.SetLimit(10)
 	}
 
 	if err := ValidateChatID(req.GetChat()); err != nil {

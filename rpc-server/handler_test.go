@@ -53,6 +53,9 @@ func checkMessageEqual(msgA *rpc.Message, msgB *rpc.Message) bool {
 func checkMessageContents(t *testing.T, req *rpc.PullRequest, resp *rpc.PullResponse, msgsTruth []*rpc.Message) {
 	lowerLimit := req.GetCursor()
 	upperLimit := Min(lowerLimit+int64(req.GetLimit()), 100)
+	if req.GetLimit() == 0 {
+		upperLimit = 10
+	}
 
 	respMessages := resp.GetMessages()
 	for i, msg := range msgsTruth[lowerLimit:upperLimit] {
@@ -346,7 +349,7 @@ func TestIMServiceImpl_Pull(t *testing.T) {
 				ctx: context.Background(),
 				req: &rpc.PullRequest{},
 			},
-			wantErr:            invalidLimitErr,
+			wantErr:            invalidChatID,
 			wantHasMore:        false,
 			wantNextCursor:     -1,
 			wantResponseLength: 0,
@@ -366,18 +369,17 @@ func TestIMServiceImpl_Pull(t *testing.T) {
 			wantResponseLength: 0,
 		},
 		{
-			name: "pull invalid limit = 0",
+			name: "pull limit = 0 (should default to 10)",
 			args: pullArgs{
 				ctx: context.Background(),
 				req: &rpc.PullRequest{
 					Chat:  chatId,
-					Limit: 0,
 				},
 			},
-			wantErr:            invalidLimitErr,
-			wantHasMore:        false,
-			wantNextCursor:     -1,
-			wantResponseLength: 0,
+			wantErr:            nil,
+			wantHasMore:        true,
+			wantNextCursor:     10,
+			wantResponseLength: 10,
 		},
 		{
 			name: "pull invalid limit = -1",
