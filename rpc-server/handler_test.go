@@ -95,10 +95,9 @@ func checkPullResponse(tt pullTest, messages, messagesReversed []*rpc.Message) f
 }
 
 func TestMain(m *testing.M) {
-	InitTestDatabase(sqlite.Open("test.db"))
+	InitTestDatabase(sqlite.Open("file::memory:?cache=shared"))
 	exitCode := m.Run()
 	CloseDatabase()
-	os.Remove("test.db")
 	os.Exit(exitCode)
 }
 
