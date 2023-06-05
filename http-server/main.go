@@ -18,6 +18,12 @@ import (
 
 var cli imservice.Client
 
+type PullResponseRest struct {
+	Messages   []*api.Message `protobuf:"bytes,1,rep,name=messages,proto3" json:"messages"`
+	HasMore    bool           `protobuf:"varint,2,opt,name=has_more,json=hasMore,proto3" json:"has_more"`                    // if true, can use next_cursor to pull the next page of messages
+	NextCursor int64          `protobuf:"varint,3,opt,name=next_cursor,json=nextCursor,proto3" json:"next_cursor,omitempty"` // starting position of next page, inclusively
+}
+
 func main() {
 	r, err := etcd.NewEtcdResolver([]string{"etcd:2379"})
 	if err != nil {
@@ -95,7 +101,7 @@ func pullMessage(ctx context.Context, c *app.RequestContext) {
 			SendTime: msg.SendTime,
 		})
 	}
-	c.JSON(consts.StatusOK, &api.PullResponse{
+	c.JSON(consts.StatusOK, &PullResponseRest{
 		Messages:   messages,
 		HasMore:    resp.GetHasMore(),
 		NextCursor: resp.GetNextCursor(),
