@@ -10,6 +10,11 @@ import (
 )
 
 func main() {
+	// Initialise connection to database
+	InitDatabase()
+	defer CloseDatabase()
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+
 	r, err := etcd.NewEtcdRegistry([]string{"etcd:2379"}) // r should not be reused.
 	if err != nil {
 		log.Fatal(err)
