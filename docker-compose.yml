@@ -14,8 +14,10 @@ services:
       - POSTGRES_HOST=${POSTGRES_DB:-db}
       - POSTGRES_PORT=${POSTGRES_DB:-5432}
     depends_on:
-      - etcd
-      - db
+      etcd:
+        condition: service_started
+      db:
+        condition: service_healthy
   http-server:
     build: http-server
     ports:
@@ -33,6 +35,11 @@ services:
       - POSTGRES_USER=imservice
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
       - POSTGRES_DB=${POSTGRES_DB:-imservice}
+    healthcheck:
+      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 10s
+      timeout: 3s
+      retries: 3
     volumes:
       - ./db_init:/docker-entrypoint-initdb.d
       - ./db_data:/var/lib/postgresql/data

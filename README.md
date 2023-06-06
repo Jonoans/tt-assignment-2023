@@ -17,6 +17,8 @@ The database I have chosen to use is PostgreSQL, primarily due to familiarity.
 # Setup Instruction
 This setup instruction assumes that [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) is already installed.
 
+The startup of the services may take a while as a heathcheck is configured to ensure the database is properly started before the RPC service can start.
+
 ```bash
 git clone https://github.com/Jonoans/tt-assignment-2023
 cd tt-assignment-2023
