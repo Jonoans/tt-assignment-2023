@@ -91,5 +91,5 @@ func ValidateMessage(message *rpc.Message) error {
 }
 
 func GetTimeNow() time.Time {
-    return time.Now().UTC()
+	return time.Now().UTC()
 }

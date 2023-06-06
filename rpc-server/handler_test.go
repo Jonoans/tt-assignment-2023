@@ -284,7 +284,7 @@ func TestIMServiceImpl_Pull(t *testing.T) {
 			wantResponseLength: 100,
 		},
 		{
-			name: "pull [0,99]",
+			name: "pull [0,99] reversed",
 			args: pullArgs{
 				ctx: context.Background(),
 				req: &rpc.PullRequest{
@@ -466,7 +466,7 @@ func TestIMServiceImpl_Send_Pull_Normalisation(t *testing.T) {
 			wantResponseLength: 100,
 		},
 		{
-			name: "pull [0,99]",
+			name: "pull [0,99] chat id reversed",
 			args: pullArgs{
 				ctx: context.Background(),
 				req: &rpc.PullRequest{
@@ -478,8 +478,9 @@ func TestIMServiceImpl_Send_Pull_Normalisation(t *testing.T) {
 			wantHasMore:        false,
 			wantNextCursor:     -1,
 			wantResponseLength: 100,
-		}, {
-			name: "pull [0,99]",
+		},
+		{
+			name: "pull [0,99] reversed",
 			args: pullArgs{
 				ctx: context.Background(),
 				req: &rpc.PullRequest{
@@ -492,6 +493,66 @@ func TestIMServiceImpl_Send_Pull_Normalisation(t *testing.T) {
 			wantHasMore:        false,
 			wantNextCursor:     -1,
 			wantResponseLength: 100,
+		},
+		{
+			name: "pull [0,9]",
+			args: pullArgs{
+				ctx: context.Background(),
+				req: &rpc.PullRequest{
+					Chat:  chatId,
+					Limit: 10,
+				},
+			},
+			wantErr:            nil,
+			wantHasMore:        true,
+			wantNextCursor:     10,
+			wantResponseLength: 10,
+		},
+		{
+			name: "pull [10,19] - ensure pagination works",
+			args: pullArgs{
+				ctx: context.Background(),
+				req: &rpc.PullRequest{
+					Chat:   chatId,
+					Cursor: 10,
+					Limit:  10,
+				},
+			},
+			wantErr:            nil,
+			wantHasMore:        true,
+			wantNextCursor:     20,
+			wantResponseLength: 10,
+		},
+		{
+			name: "pull [0,9] reversed",
+			args: pullArgs{
+				ctx: context.Background(),
+				req: &rpc.PullRequest{
+					Chat:    chatId,
+					Reverse: b(true),
+					Limit:   10,
+				},
+			},
+			wantErr:            nil,
+			wantHasMore:        true,
+			wantNextCursor:     10,
+			wantResponseLength: 10,
+		},
+		{
+			name: "pull [10,19] reversed - ensure pagination works",
+			args: pullArgs{
+				ctx: context.Background(),
+				req: &rpc.PullRequest{
+					Chat:    chatId,
+					Reverse: b(true),
+					Cursor:  10,
+					Limit:   10,
+				},
+			},
+			wantErr:            nil,
+			wantHasMore:        true,
+			wantNextCursor:     20,
+			wantResponseLength: 10,
 		},
 	}
 	for _, tt := range tests {

@@ -1,14 +1,12 @@
 package main
 
 import (
-	"errors"
 	"log"
 	"net/url"
 	"os"
 	"time"
 
 	"github.com/TikTokTechImmersion/assignment_demo_2023/rpc-server/kitex_gen/rpc"
-	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -53,17 +51,6 @@ func (msg *ChatMessage) ToChatCursor(reverse bool, cursor int64) *ChatCursorCach
 	}
 }
 
-func createChatCursorCache(msg *ChatMessage, reverse bool, cursor int64) {
-	chatCursorCache := msg.ToChatCursor(reverse, cursor)
-	if err := GetDatabase().Create(chatCursorCache).Error; err != nil {
-		var perr *pgconn.PgError
-		errors.As(err, &perr)
-		if perr != nil && perr.Code != "23505" {
-			log.Printf("Error when creating chat cursor cache: %+v\n", err)
-		}
-	}
-}
-
 var databaseConn *gorm.DB
 
 func InitDatabase() {
@@ -93,7 +80,7 @@ func InitDatabase() {
 
 func InitTestDatabase(dialer gorm.Dialector) {
 	db, err := gorm.Open(dialer, &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Error),
+		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		log.Panicf("Could not connect to database: %+v\n", err)
