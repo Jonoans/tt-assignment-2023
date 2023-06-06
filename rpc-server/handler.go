@@ -100,7 +100,7 @@ func (s *IMServiceImpl) Pull(ctx context.Context, req *rpc.PullRequest) (*rpc.Pu
 			hasMore = true
 			nextCursor := req.GetCursor() + int64(limit)
 			resp.SetNextCursor(&nextCursor)
-			createChatCursorCache(&msg, req.GetReverse(), nextCursor)
+			createChatCursorCache(msg, req.GetReverse(), nextCursor)
 			break
 		}
 		respMessages[i] = msg.ToResponse()
@@ -143,7 +143,7 @@ func getChatCacheCursor(req *rpc.PullRequest) (*ChatCursorCache, error) {
 	return cachedCursor, nil
 }
 
-func getMessages(req *rpc.PullRequest) ([]ChatMessage, error) {
+func getMessages(req *rpc.PullRequest) ([]*ChatMessage, error) {
 	cachedCursor, err := getChatCacheCursor(req)
 	if err != nil {
 		return nil, err
@@ -157,7 +157,7 @@ func getMessages(req *rpc.PullRequest) ([]ChatMessage, error) {
 		sortCond = "<="
 	}
 
-	var messages []ChatMessage
+	var messages []*ChatMessage
 	limit := int(req.GetLimit())
 	if cachedCursor != nil {
 		queryCondition := fmt.Sprintf("chat_id = ? AND sent_at %s ?", sortCond)
@@ -170,7 +170,7 @@ func getMessages(req *rpc.PullRequest) ([]ChatMessage, error) {
 		}
 
 		if req.GetCursor() > 0 && len(messages) > 0 {
-			createChatCursorCache(&messages[0], req.GetReverse(), req.GetCursor())
+			createChatCursorCache(messages[0], req.GetReverse(), req.GetCursor())
 		}
 	}
 
