@@ -74,4 +74,4 @@ The information "cached" in the database helps us to use the `SendTime (>=|<=) ?
 
 Some additional code was also added in the main function to support service discovery features. The added code attempts to use the hostname of the service's deployment environment to lookup its own IP address. This IP address will then be registered as the service instance's IP address on the registry.
 
-In the case of our deployment environment, such a method will return a valid IP address which other containers in the setup can use to access our RPC server instance. However, such a method may not work in other environments.code was also added in the main function to support service discovery features. The added code attempts to use the hostname of the service's deployment environment to lookup its own IP address 
+In the case of our deployment environment, such a method will return a valid IP address which other containers in the setup can use to access our RPC server instance. However, such a method may not work in other environments.
