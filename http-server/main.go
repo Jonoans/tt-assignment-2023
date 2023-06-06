@@ -32,7 +32,6 @@ func main() {
 	cli = imservice.MustNewClient("demo.rpc.server",
 		client.WithResolver(r),
 		client.WithRPCTimeout(1*time.Second),
-		client.WithHostPorts("rpc-server:8888"),
 	)
 
 	h := server.Default(server.WithHostPorts("0.0.0.0:8080"))

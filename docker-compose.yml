@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     build: rpc-server
     ports:
-      - "8888:8888"
+      - "8888"
     environment:
       - SERVICE_NAME=rpc-server
       - SERVICE_TAGS=rpc
@@ -28,6 +28,7 @@ services:
       - rpc-server
   db:
     image: postgres
+    command: postgres -c 'max_connections=500' -c 'log_min_messages=FATAL'
     environment:
       - POSTGRES_USER=imservice
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
