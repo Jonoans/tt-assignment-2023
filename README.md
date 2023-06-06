@@ -44,10 +44,10 @@ Most of the functionality involving the service was implemented in RPC service, 
 
 For starters, PostgreSQL was the database I picked to back this message service. Thus, the popular GORM package to interface with the database.
 
-There were 2 data structs that were created to support this service, first the `ChatMessage` struct used to store the chat messages in the database and next the `ChatCusorCache` struct used to "cache" some information to help facilitate quicker lookups for messages. This will be expounded in the later section.
+There were 2 data structs that were created to support this service, first the `ChatMessage` struct used to store the chat messages in the database and next the `ChatCusorCache` struct used to "cache" some information to help facilitate quicker lookups for messages.
+This will be expounded in the later section.
 
 Indexes are used to support quicker lookups. These indexes are defined using the `gorm` struct tags.
-
 
 ### Send Function
 
@@ -69,3 +69,9 @@ The information "cached" in the database helps us to use the `SendTime (>=|<=) ?
 1. Incoming requests are validated to ensure `limit` and `cursor` are >= 0. Limit will be presumed to be the default of 10 if it is set to 0.<br>
     The `chat` field is also validated to ensure it is in the expected format of `member1:member2`
 2. For lookups, the service will default to limit and offset queries if cursor == 0 or if cache information required is not available. Otherwise it will attempt to query the requested information with conditionals and limit.
+
+### Other Changes
+
+Some additional code was also added in the main function to support service discovery features. The added code attempts to use the hostname of the service's deployment environment to lookup its own IP address. This IP address will then be registered as the service instance's IP address on the registry.
+
+In the case of our deployment environment, such a method will return a valid IP address which other containers in the setup can use to access our RPC server instance. However, such a method may not work in other environments.code was also added in the main function to support service discovery features. The added code attempts to use the hostname of the service's deployment environment to lookup its own IP address 
