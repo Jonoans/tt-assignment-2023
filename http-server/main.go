@@ -13,6 +13,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/loadbalance"
 	etcd "github.com/kitex-contrib/registry-etcd"
 )
 
@@ -29,9 +30,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	cli = imservice.MustNewClient("demo.rpc.server",
 		client.WithResolver(r),
 		client.WithRPCTimeout(1*time.Second),
+		client.WithLoadBalancer(loadbalance.NewWeightedRandomBalancer()),
 	)
 
 	h := server.Default(server.WithHostPorts("0.0.0.0:8080"))
